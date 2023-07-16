@@ -1,6 +1,10 @@
-import { FC } from "react";
+"use client";
+import { signIn } from "next-auth/react";
+import { FC, useRef } from "react";
 
 export const Login: FC = () => {
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   return (
     <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
       <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
@@ -10,7 +14,12 @@ export const Login: FC = () => {
         <form
           className="mt-6"
           method="post"
-          action="/api/auth/callback/credentials"
+          onSubmit={() =>
+            signIn("credentials", {
+              email: emailRef.current?.value,
+              password: passwordRef.current?.value,
+            })
+          }
         >
           <div className="mb-2">
             <label
@@ -20,6 +29,7 @@ export const Login: FC = () => {
               Email
             </label>
             <input
+              ref={emailRef}
               type="email"
               className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
             />
@@ -32,6 +42,7 @@ export const Login: FC = () => {
               Password
             </label>
             <input
+              ref={passwordRef}
               type="password"
               className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
             />

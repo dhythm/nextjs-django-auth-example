@@ -9,21 +9,13 @@ const options: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: "Sign in",
+      id: "credentials",
+      name: "credentials",
       credentials: {
-        email: {
-          label: "Email",
-          type: "email",
-          placeholder: "example@examaple.com",
-        },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log(
-          "--------------------\n",
-          credentials,
-          "\n--------------------"
-        );
         const users = [
           { id: "1", email: "user1@example.com", password: "password1" },
           { id: "2", email: "user2@example.com", password: "password2" },
@@ -31,6 +23,7 @@ const options: NextAuthOptions = {
         ];
 
         const user = users.find((user) => user.email === credentials?.email);
+        console.log(user);
 
         if (user && user?.password === credentials?.password) {
           return {
@@ -46,27 +39,19 @@ const options: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    jwt: async ({ token, user, account, profile, isNewUser }) => {
-      console.log({ token, user, account, profile, isNewUser });
-      if (user) {
-        token.user = user;
-        const u = user as any;
-        token.role = u.role;
-      }
-      if (account) {
-        token.accessToken = account.access_token;
-      }
+    // signIn: async ({ user, account, profile, email, credentials }) => {
+    //   return true;
+    // },
+    // redirect: async ({ url, baseUrl }) => {
+    //   return baseUrl;
+    // },
+    jwt: async ({ token, user, account, profile }) => {
+      console.log({ token, user, account, profile });
       return token;
     },
-    session: ({ session, token }) => {
-      console.log({ session, token });
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          role: token.role,
-        },
-      };
+    session: ({ session, user, token }) => {
+      console.log({ session, user, token });
+      return session;
     },
   },
 };
