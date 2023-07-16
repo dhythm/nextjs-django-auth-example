@@ -1,3 +1,4 @@
+import jwtDecode from "jwt-decode";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -16,25 +17,36 @@ const options: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const users = [
-          { id: "1", email: "user1@example.com", password: "password1" },
-          { id: "2", email: "user2@example.com", password: "password2" },
-          { id: "3", email: "abc@abc", password: "123" },
-        ];
+        const res = await fetch("http://localhost:8000/signin/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(credentials),
+        });
 
-        const user = users.find((user) => user.email === credentials?.email);
-        console.log(user);
-
-        if (user && user?.password === credentials?.password) {
-          return {
-            id: user.id,
-            name: user.email,
-            email: user.email,
-            role: "admin",
-          };
-        } else {
+        if (!res.ok) {
           return null;
         }
+
+        const data = await res.json();
+
+        if (!data) {
+          return null;
+        }
+
+        const decoded = jwtDecode<{
+          user_id: number;
+          email: string;
+          info: string;
+          exp: number;
+        }>(data.token);
+
+        return {
+          id: String(decoded.user_id),
+          name: undefined,
+          email: decoded.email,
+          image: undefined,
+          accessToken: data.token,
+        };
       },
     }),
   ],
@@ -46,11 +58,11 @@ const options: NextAuthOptions = {
     //   return baseUrl;
     // },
     jwt: async ({ token, user, account, profile }) => {
-      console.log({ token, user, account, profile });
+      console.log("JWT", { token, user, account, profile });
       return token;
     },
     session: ({ session, user, token }) => {
-      console.log({ session, user, token });
+      console.log("SESSION", { session, user, token });
       return session;
     },
   },

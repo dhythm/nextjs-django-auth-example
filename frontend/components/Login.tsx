@@ -1,8 +1,16 @@
 "use client";
-import { signIn } from "next-auth/react";
 import { FC, useRef } from "react";
 
-export const Login: FC = () => {
+type Credentials = {
+  email: string | undefined;
+  password: string | undefined;
+};
+
+type Props = {
+  onSubmit: (credentials: Credentials) => void;
+};
+
+export const Login: FC<Props> = ({ onSubmit }) => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   return (
@@ -14,12 +22,13 @@ export const Login: FC = () => {
         <form
           className="mt-6"
           method="post"
-          onSubmit={() =>
-            signIn("credentials", {
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit({
               email: emailRef.current?.value,
               password: passwordRef.current?.value,
-            })
-          }
+            });
+          }}
         >
           <div className="mb-2">
             <label
