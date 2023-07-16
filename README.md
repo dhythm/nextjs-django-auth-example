@@ -125,3 +125,7 @@ Create a model for sign-in in `api/models.py`.
 poetry run python manage.py makemigrations
 poetry run python manage.py migrate
 ```
+
+```sh
+poetry add pyjwt
+```
