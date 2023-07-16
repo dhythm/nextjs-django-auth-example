@@ -36,6 +36,19 @@ npm install
 npm run dev
 ```
 
+### Setting up
+
+#### Authentication
+
+```sh
+npm install next-auth
+```
+
+```sh
+openssl rand -base64 32
+# add SECRET to .env
+```
+
 ## Backend
 
 ### Installation

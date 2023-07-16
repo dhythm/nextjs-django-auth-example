@@ -1,5 +1,5 @@
-import { Login } from "@/components";
+"use client";
 
 export default function Index() {
-  return <Login />;
+  return <></>;
 }
