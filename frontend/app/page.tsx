@@ -4,12 +4,12 @@ import { signIn, useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 export default function Index() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   useEffect(() => {
-    if (!session?.user) {
+    if (status === "unauthenticated") {
       signIn();
     }
-  }, [session?.user]);
+  }, [status]);
 
   return <></>;
 }

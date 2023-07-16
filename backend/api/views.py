@@ -8,7 +8,7 @@ from .utils.auth import JWTAuthentication, NormalAuthentication
 class Signin(APIView):
     authentication_classes = [NormalAuthentication,]
     def post (self, request, *args, **kwargs):
-        return Response({"token": request.user})
+        return Response({"access_token": request.user})
 
 class Protected(APIView):
     authentication_classes = [JWTAuthentication, ]

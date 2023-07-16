@@ -29,7 +29,7 @@ const options: NextAuthOptions = {
 
         const data = await res.json();
 
-        if (!data) {
+        if (!data || !data.access_token) {
           return null;
         }
 
@@ -38,14 +38,14 @@ const options: NextAuthOptions = {
           email: string;
           info: string;
           exp: number;
-        }>(data.token);
+        }>(data.access_token);
 
         return {
           id: String(decoded.user_id),
           name: undefined,
           email: decoded.email,
           image: undefined,
-          accessToken: data.token,
+          accessToken: data.access_token,
         };
       },
     }),
@@ -59,9 +59,10 @@ const options: NextAuthOptions = {
     // },
     jwt: async ({ token, user, account, profile }) => {
       console.log("JWT", { token, user, account, profile });
-      return token;
+      return { ...token, ...user };
     },
     session: ({ session, user, token }) => {
+      session.user = token;
       console.log("SESSION", { session, user, token });
       return session;
     },
