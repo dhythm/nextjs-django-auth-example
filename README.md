@@ -129,3 +129,7 @@ poetry run python manage.py migrate
 ```sh
 poetry add pyjwt
 ```
+
+```sh
+poetry run python manage.py loaddata fixtures/users.json
+```

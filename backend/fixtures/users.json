@@ -1,0 +1,11 @@
+[
+  {
+    "model": "api.userinfo",
+    "pk": 1,
+    "fields": {
+      "email": "user1@example.com",
+      "password": "password1!",
+      "info": "context"
+    }
+  }
+]

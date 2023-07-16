@@ -4,13 +4,14 @@ import jwt
 from api.models import UserInfo
 from jwtauth.settings import SECRET_KEY
 from rest_framework import exceptions
-from rest_framework.authentication import BaseAuthentication
+from rest_framework.authentication import (BaseAuthentication,
+                                           get_authorization_header)
 
 
 class NormalAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        email = request._request.POST.get("email")
-        password = request._request.POST.get("password")
+        email = request.data.get("email")
+        password = request.data.get("password")
         user_obj = UserInfo.objects.filter(email=email).first()
         if not user_obj:
             raise exceptions.AuthenticationFailed('Authentication failed')
@@ -24,33 +25,24 @@ class NormalAuthentication(BaseAuthentication):
 
 def generate_jwt(user):
     timestamp = int(time.time()) + 60*60*24*7
-    return jwt.encode(
-        {"user_id": user.pk, "email": user.email, "info": user.info, "exp": timestamp},
-        SECRET_KEY).decode("utf-8")
+    return jwt.encode({"user_id":user.pk,"email":user.email,"info":user.info,"exp":timestamp}, SECRET_KEY, algorithm="HS256")
 
 class JWTAuthentication(BaseAuthentication):
     keyword = 'JWT'
     model = None
     
     def authenticate(self, request):
-        auth = get_authorization_header(request).split()
+        auth = get_authorization_header(request)
         
-        if not auth or auth[0].lower() != self. keyword.lower().encode():
+        if not auth:
             return None
         
-        if len(auth) == 1:
-            msg = "Invalid Authorization"
-            raise exceptions.AuthenticationFailed(msg)
-        elif len(auth) > 2:
-            msg = "Invalid Authorization: no space"
-            raise exceptions.AuthenticationFailed(msg)
-        
         try:
-            jwt_token = auth[1]
-            jwt_info = jwt.decode(jwt_token, SECRET_KEY)
-            userid = jwt_info.get("userid")
+            jwt_token = auth.decode("utf-8")
+            jwt_info = jwt.decode(jwt_token, SECRET_KEY, algorithms="HS256")
+            user_id = jwt_info.get("user_id")
             try:
-                user = UserInfo.objects.get(pk=userid)
+                user = UserInfo.objects.get(pk=user_id)
                 user.is_authenticated = True
                 return (user, jwt_token)
             except:
