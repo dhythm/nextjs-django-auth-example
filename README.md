@@ -99,3 +99,29 @@ poetry add djangorestframework
 poetry run django-admin startproject jwtauth .
 poetry run python manage.py runserver
 ```
+
+### Set up authentication.
+
+Create a new app.
+
+```sh
+cd jwtauth
+poetry run python manage.py startapp api
+```
+
+Add `rest_framework` and `api` to `jwtquth/settings.py`.
+
+```python
+INSTALLED_APPS = [
+  ...,
+  'rest_framework',
+  'api'
+]
+```
+
+Create a model for sign-in in `api/models.py`.
+
+```sh
+poetry run python manage.py makemigrations
+poetry run python manage.py migrate
+```
