@@ -7,5 +7,14 @@
       "password": "password1!",
       "info": "context"
     }
+  },
+  {
+    "model": "user.user",
+    "pk": "5097fbf6826f444fbf144af933798b7b",
+    "fields": {
+      "username": "user",
+      "email": "user@test.com",
+      "password": "pbkdf2_sha256$600000$ntMfaAegD6GdPKKtHc6Gg8$33rMmF1RRpJKV/UpESC3IgYgk9zoPSuMaCRanfs9GTo="
+    }
   }
 ]

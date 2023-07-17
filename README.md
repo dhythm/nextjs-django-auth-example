@@ -93,6 +93,7 @@ Do you confirm generation? (yes/no) [yes]
 ```sh
 poetry add Django
 poetry add djangorestframework
+poetry add djangorestframework-simplejwt
 ```
 
 ```sh
@@ -100,7 +101,24 @@ poetry run django-admin startproject jwtauth .
 poetry run python manage.py runserver
 ```
 
+Add `rest_framework` to `jwtquth/settings.py`.
+
+```python
+INSTALLED_APPS = [
+  ...,
+  'rest_framework',
+]
+```
+
 ### Set up authentication.
+
+Create user data.
+
+```sh
+poetry run python manage.py loaddata fixtures/users.json
+```
+
+#### Self-made authentication
 
 Create a new app.
 
@@ -109,12 +127,17 @@ cd jwtauth
 poetry run python manage.py startapp api
 ```
 
-Add `rest_framework` and `api` to `jwtquth/settings.py`.
+Add jwt library.
+
+```sh
+poetry add pyjwt
+```
+
+Add `api` to `jwtquth/settings.py`.
 
 ```python
 INSTALLED_APPS = [
   ...,
-  'rest_framework',
   'api'
 ]
 ```
@@ -126,10 +149,27 @@ poetry run python manage.py makemigrations
 poetry run python manage.py migrate
 ```
 
+#### DRF authentication
+
+Add custom user model of `user` to `jwtquth/settings.py`.
+
+```python
+INSTALLED_APPS = [
+  ...,
+  'user'
+]
+```
+
+Create user data via django.
+
 ```sh
-poetry add pyjwt
+poetry run python manage.py createsuperuser
 ```
 
 ```sh
-poetry run python manage.py loaddata fixtures/users.json
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@test.com", "password": "password1!"}' \
+  http://localhost:8000/api/token/
 ```
