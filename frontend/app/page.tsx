@@ -11,5 +11,9 @@ export default function Index() {
     }
   }, [status]);
 
-  return <></>;
+  return (
+    <div className="p-4">
+      <p className="break-all">{session && JSON.stringify(session)}</p>
+    </div>
+  );
 }
